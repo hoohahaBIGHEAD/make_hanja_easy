@@ -41,15 +41,16 @@ function extractKanji(translation) {
         }
   
         const output = words.map(w => {
-          const defs = w.split("").map(k => {
+          const kanjiDefs = w.split("").map(k => {
             const kanjiLookup = hanjaDic[k];
-            if (kanjiLookup && kanjiLookup[0].kor) {
-              return kanjiLookup[0].kor;
+            if (kanjiLookup) {
+              return kanjiLookup.map(l => l.kor);
             } else {
-              return "";
+              return [""];
             }
-          }).join("");
-          const wordWithParens = w + "(" + defs + ")";
+          });
+          const allCombos = cartesianProduct(kanjiDefs);
+          const wordWithParens = w + "(" + allCombos.map(c => c.join("")).join(", ") + ")";
           const wordDefs = w.split("").map(k => lookupKanji(k)).join(", ");
           return wordWithParens + ": " + wordDefs;
         }).join("\n");
@@ -59,6 +60,28 @@ function extractKanji(translation) {
       .catch(error => {
         console.error(error);
       });
+  }
+  
+  function cartesianProduct(arrays) {
+    if (!arrays || !arrays.length) {
+      return [];
+    }
+  
+    function helper(arrays, i, cur, res) {
+      if (i === arrays.length) {
+        res.push(cur.slice());
+        return;
+      }
+  
+      for (let j = 0; j < arrays[i].length; j++) {
+        cur[i] = arrays[i][j];
+        helper(arrays, i + 1, cur, res);
+      }
+    }
+  
+    const res = [];
+    helper(arrays, 0, [], res);
+    return res;
   }
   
   
