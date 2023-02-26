@@ -1,8 +1,9 @@
 {
-  "manifest_version": 2,
-  "name": "My Extension",
+  "name": "Make Hanja Easy",
   "version": "1.0",
-  "description": "This is my extension.",
+  "manifest_version": 2,
+  "description": "A Chrome extension to make hanja easier to read",
+  "permissions": ["activeTab"],
   "browser_action": {
     "default_popup": "popup.html"
   }
