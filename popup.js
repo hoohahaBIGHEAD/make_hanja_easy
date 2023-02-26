@@ -2,16 +2,15 @@ function extractKanji(translation) {
     const kanjiRegex = /[\u4e00-\u9faf]+/g;
     const kanjiList = translation.match(kanjiRegex);
     const twoOrMoreKanjiList = kanjiList.filter(kanji => kanji.length >= 2);
-    const twoOrMoreKanji = twoOrMoreKanjiList.join("");
   
-    return twoOrMoreKanji;
+    return twoOrMoreKanjiList;
   }
   
   function lookupKanji(kanji) {
     if (kanji in hanjaDic) {
       const definitions = hanjaDic[kanji];
-      const defList = definitions.map(def => def.kor + ": " + def.def);
-      return defList.join(", ");
+      const defList = definitions.map(def => def.def + " " + def.kor);
+      return defList.join(" ");
     } else {
       return "";
     }
@@ -26,8 +25,25 @@ function extractKanji(translation) {
       .then(response => response.json())
       .then(data => {
         const translation = data[0][0][0];
-        const kanji = extractKanji(translation);
-        const output = kanji.split("").map(k => k + ": " + lookupKanji(k)).join("\n");
+        const kanjiList = extractKanji(translation);
+        let words = [kanjiList[0]];
+  
+        for (let i = 1; i < kanjiList.length; i++) {
+          const prevKanji = kanjiList[i - 1];
+          const curKanji = kanjiList[i];
+          const prevInDic = prevKanji in hanjaDic;
+          const curInDic = curKanji in hanjaDic;
+          if (prevInDic && curInDic) {
+            words[words.length - 1] += curKanji;
+          } else {
+            words.push(curKanji);
+          }
+        }
+  
+        const output = words.map(w => {
+          const defs = w.split("").map(k => lookupKanji(k)).join(", ");
+          return w + ": " + defs;
+        }).join(", ");
         document.getElementById("translation").innerText = output;
       })
       .catch(error => {
