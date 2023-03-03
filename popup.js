@@ -50,7 +50,29 @@ function extractKanji(translation) {
     }
   }
   
-  function generateOutput(words) {
+  function translateText(selectedText) {
+    fetchTranslation(selectedText).then(translation => {
+      const kanjiList = extractKanji(translation);
+      let words = [kanjiList[0]];
+  
+      for (let i = 1; i < kanjiList.length; i++) {
+        const prevKanji = kanjiList[i - 1];
+        const curKanji = kanjiList[i];
+        const prevInDic = prevKanji in hanjaDic;
+        const curInDic = curKanji in hanjaDic;
+        if (prevInDic && curInDic) {
+          words[words.length - 1] += curKanji;
+        } else {
+          words.push(curKanji);
+        }
+      }
+  
+      const koreanSentence = selectedText;
+      generateOutput(words, koreanSentence);
+    });
+  }
+  
+  function generateOutput(words, koreanSentence) {
     const outputList = words.flatMap(w => {
       const kanjiKors = w.split("").map(k => {
         const kanjiLookup = hanjaDic[k];
@@ -80,30 +102,9 @@ function extractKanji(translation) {
       }
     });
     const outputStr = JSON.stringify(outputList, null, 2);
-    document.getElementById("translation").innerText = outputStr;
+    document.getElementById("translation").innerText = koreanSentence + "\n\n" + outputStr;
   }
-          
-  function translateText(selectedText) {
-    fetchTranslation(selectedText).then(translation => {
-      const kanjiList = extractKanji(translation);
-      let words = [kanjiList[0]];
-  
-      for (let i = 1; i < kanjiList.length; i++) {
-        const prevKanji = kanjiList[i - 1];
-        const curKanji = kanjiList[i];
-        const prevInDic = prevKanji in hanjaDic;
-        const curInDic = curKanji in hanjaDic;
-        if (prevInDic && curInDic) {
-          words[words.length - 1] += curKanji;
-        } else {
-          words.push(curKanji);
-        }
-      }
-  
-      generateOutput(words);
-    });
-  }
-  
+    
   
   function cartesianProduct(arrays) {
     if (!arrays || !arrays.length) {
