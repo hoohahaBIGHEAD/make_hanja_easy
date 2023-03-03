@@ -73,12 +73,16 @@ function extractKanji(translation) {
       const outputTuples = allKors.map((kors, i) => {
         return [kors.join(""), allDefs[i].join(", ")];
       });
-      return outputTuples;
+      if (outputTuples.length > 1) {
+        return [outputTuples];
+      } else {
+        return outputTuples;
+      }
     });
     const outputStr = JSON.stringify(outputList, null, 2);
     document.getElementById("translation").innerText = outputStr;
   }
-        
+          
   function translateText(selectedText) {
     fetchTranslation(selectedText).then(translation => {
       const kanjiList = extractKanji(translation);
