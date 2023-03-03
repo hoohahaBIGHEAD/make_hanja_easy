@@ -102,7 +102,19 @@ function extractKanji(translation) {
       }
     });
     const outputStr = JSON.stringify(outputList, null, 2);
+    koreanSentence = insertKanji(outputList, koreanSentence);
     document.getElementById("translation").innerText = koreanSentence + "\n\n" + outputStr;
+  }
+    
+  function insertKanji(outputStr, koreanSentence) {
+    outputStr.forEach(item => {
+      if (typeof item[0] === "string") {
+        koreanSentence = koreanSentence.replace(item[0], item[1]);
+      } else {
+        koreanSentence = insertKanji(item, koreanSentence);
+      }
+    });
+    return koreanSentence;
   }
     
   
