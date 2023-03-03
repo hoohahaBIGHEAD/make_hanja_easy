@@ -51,7 +51,7 @@ function extractKanji(translation) {
   }
   
   function generateOutput(words) {
-    const output = words.map(w => {
+    const outputList = words.map(w => {
       const kanjiKors = w.split("").map(k => {
         const kanjiLookup = hanjaDic[k];
         if (kanjiLookup) {
@@ -68,16 +68,16 @@ function extractKanji(translation) {
           return [""];
         }
       });
-  
-      const allCombos = cartesianProduct(kanjiKors);
-      const wordWithParens = w + "(" + allCombos.map(c => c.join("")).join(", ") + ")";
-      const wordDefs = cartesianProduct(kanjiDefs).map(combo => {
-        return "[" + combo.join(", ") + "]";
-      }).join(", ");
-      return wordWithParens + ": " + wordDefs;
-    }).join("\n");
-  
-    document.getElementById("translation").innerText = output;
+      const allKors = cartesianProduct(kanjiKors);
+      const allDefs = cartesianProduct(kanjiDefs);
+      const outputTuples = allKors.map((kors, i) => {
+        return [kors.join(""), allDefs[i].join(", ")];
+      });
+      return outputTuples;
+    });
+    const outputDict = Object.fromEntries(outputList.flat().map(([kors, defs], i) => [i, [kors, defs]]));
+    const outputStr = JSON.stringify(outputDict, null, 2);
+    document.getElementById("translation").innerText = outputStr;
   }
   
   function translateText(selectedText) {
