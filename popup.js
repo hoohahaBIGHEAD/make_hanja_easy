@@ -141,9 +141,20 @@ function extractKanji(translation) {
     return res;
   }
   
+  function changeSelectedText() {
+    var selection = window.getSelection();
+    var range = selection.getRangeAt(0);
+    var selectedText = range.extractContents();
+    var span = document.createElement("span");
+    span.style.color = "red";
+    span.style.fontSize = "24px";
+    span.appendChild(selectedText);
+    range.insertNode(span);
+  }
+
   
   chrome.tabs.executeScript({
-    code: "window.getSelection().toString();"
+    code: "(" + changeSelectedText.toString() + ")(); window.getSelection().toString();"
   }, function (selectedText) {
     if (selectedText[0]) {
       const sentences = selectedText[0].split(/[.!?\n]/g).filter(sentence => sentence.trim() !== '');
@@ -152,3 +163,4 @@ function extractKanji(translation) {
       });
     }
   });
+  
