@@ -17,9 +17,10 @@ function extractKanji(translation) {
   }
   
   function fetchTranslation(selectedText) {
+    const replacedText = selectedText.replace(/\s+/g, ',');
     const sourceLang = "auto";
     const targetLang = "ja";
-    const translateUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURI(selectedText)}`;
+    const translateUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURI(replacedText)}`;
     
     return fetch(translateUrl)
       .then(response => response.json())
@@ -109,7 +110,7 @@ function extractKanji(translation) {
   function insertKanji(outputStr, koreanSentence) {
     outputStr.forEach(item => {
       if (typeof item[0] === "string") {
-        koreanSentence = koreanSentence.replace(item[0], item[1]);
+        koreanSentence = koreanSentence.replace(item[0], (item[0]+'('+item[1]+')'));
       } else {
         koreanSentence = insertKanji(item, koreanSentence);
       }
