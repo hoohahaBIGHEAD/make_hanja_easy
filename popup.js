@@ -146,7 +146,9 @@ function extractKanji(translation) {
     code: "window.getSelection().toString();"
   }, function (selectedText) {
     if (selectedText[0]) {
-      translateText(selectedText[0]);
+      const sentences = selectedText[0].split(/[.!?\n]/g).filter(sentence => sentence.trim() !== '');
+      sentences.forEach(sentence => {
+        translateText(sentence);
+      });
     }
   });
-  
