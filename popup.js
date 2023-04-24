@@ -84,7 +84,13 @@ function extractKanji(translation) {
         return outputTuples;
       }
     });
-    const outputStr = JSON.stringify(outputList, null, 2);
+    const outputStr = outputList.map(item => {
+      if (typeof item === "string") {
+        return `${item}`;
+      } else {
+        return `${item[0]}\n${item[1]}`;
+      }
+    }).join("\n---\n");
     koreanSentence = insertKanji(outputList, koreanSentence);
     document.getElementById("translation").innerText = koreanSentence + "\n\n" + outputStr;
   }
