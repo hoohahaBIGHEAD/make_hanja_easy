@@ -33,24 +33,6 @@ function extractKanji(translation) {
       });
   }
   
-  function extractKanji(translation) {
-    const kanjiRegex = /[\u4e00-\u9faf]+/g;
-    const kanjiList = translation.match(kanjiRegex);
-    const twoOrMoreKanjiList = kanjiList.filter(kanji => kanji.length >= 2);
-  
-    return twoOrMoreKanjiList;
-  }
-  
-  function lookupKanji(kanji) {
-    if (kanji in hanjaDic) {
-      const definitions = hanjaDic[kanji];
-      const defList = definitions.map(def => def.def + " " + def.kor);
-      return defList.join(", ");
-    } else {
-      return "";
-    }
-  }
-  
   function translateText(selectedText) {
     fetchTranslation(selectedText).then(translation => {
       const kanjiList = extractKanji(translation);
@@ -86,7 +68,7 @@ function extractKanji(translation) {
       const kanjiDefs = w.split("").map(k => {
         const kanjiLookup = hanjaDic[k];
         if (kanjiLookup) {
-          return kanjiLookup.map(l => l.def + ' ' + l.kor);
+          return kanjiLookup.map(l => l.def);
         } else {
           return [""];
         }
