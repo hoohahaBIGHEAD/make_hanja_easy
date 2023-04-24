@@ -86,7 +86,7 @@ function extractKanji(translation) {
       const kanjiDefs = w.split("").map(k => {
         const kanjiLookup = hanjaDic[k];
         if (kanjiLookup) {
-          return kanjiLookup.map(l => l.def);
+          return kanjiLookup.map(l => l.def + ' ' + l.kor);
         } else {
           return [""];
         }
